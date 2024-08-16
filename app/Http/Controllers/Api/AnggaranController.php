@@ -15,11 +15,31 @@ class AnggaranController extends Controller
      *
      * @return void
      */
-    public function index()
+    public function index(Request $request)
     {
-        $anggaran = Anggaran::latest()->get();
-        return new AnggaranResource(true, 'List Anggaran', $anggaran);
+        // Ambil parameter pencarian dari query string, jika ada
+        $search = $request->query('search', '');
+
+        // Mulai dengan query untuk mengambil data terbaru
+        $query = Anggaran::latest();
+
+        // Tambahkan kondisi pencarian jika ada parameter 'search'
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                // Anda dapat menyesuaikan kolom yang dicari sesuai kebutuhan
+                $q->where('nama_anggaran', 'like', "%$search%")
+                    ->orWhere('nominal', 'like', "%$search%")
+                    ->orWhere('penggunaan', 'like', "%$search%");
+            });
+        }
+
+        // Lakukan paginasi pada hasil query
+        $anggaran = $query->paginate(5);
+
+        // Kembalikan hasil dalam format resource
+        return new AnggaranResource(true, 'List Inventaris', $anggaran);
     }
+
 
     /**
      * store

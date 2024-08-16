@@ -15,6 +15,5 @@ Route::group([
     'middleware' => ['auth:api']
 ], function () {
     Route::post('logout', [LogoutController::class, 'logout']);
-    Route::apiResource('/aset', AsetController::class);
     Route::apiResource('/anggaran', AnggaranController::class);
 });
